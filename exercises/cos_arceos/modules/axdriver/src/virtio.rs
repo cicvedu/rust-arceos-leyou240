@@ -6,6 +6,7 @@ use axhal::mem::{phys_to_virt, virt_to_phys};
 use cfg_if::cfg_if;
 use driver_common::{BaseDriverOps, DevResult, DeviceType};
 use driver_virtio::{BufferDirection, PhysAddr, VirtIoHal};
+#[cfg(net_dev = "virtio-net")]
 use crate::filter::NetFilter;
 
 use crate::{drivers::DriverProbe, AxDeviceEnum};

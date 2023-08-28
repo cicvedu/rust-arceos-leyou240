@@ -1,23 +1,25 @@
-use driver_common::BaseDriverOps;
+use driver_common::{BaseDriverOps, DeviceType};
+#[cfg(feature = "net")]
 use driver_net::NetDriverOps;
-use driver_virtio::{Transport, VirtIoNetDev};
-use crate::virtio::VirtIoHalImpl;
+// use driver_virtio::{Transport, VirtIoNetDev};
+// use crate::virtio::VirtIoHalImpl;
 
-pub struct NetFilter<T> {
+pub struct NetFilter<T: BaseDriverOps> {
     pub inner: T,
 }
-
-impl<T: BaseDriverOps> BaseDriverOps for NetFilter<T> {
+#[cfg(feature = "net")]
+impl<T: BaseDriverOps + NetDriverOps> BaseDriverOps for NetFilter<T> {
     fn device_name(&self) -> &str {
         self.inner.device_name()
     }
 
-    fn device_type(&self) -> driver_common::DeviceType {
+    fn device_type(&self) -> DeviceType {
         self.inner.device_type()
     }
 }
 
-impl<T: Transport> NetDriverOps for NetFilter<VirtIoNetDev<VirtIoHalImpl, T, 64>> {
+#[cfg(feature = "net")]
+impl<T: BaseDriverOps + NetDriverOps> NetDriverOps for NetFilter<T> {
     fn mac_address(&self) -> driver_net::EthernetAddress {
         self.inner.mac_address()
     }

@@ -166,15 +166,19 @@ impl VfsNodeOps for DirNode {
     }
 
     fn rename(&self, src: &str, dst: &str) -> VfsResult {
-        let (src_name, _) = split_path(dst);
-        let (dst_n_, dst_rest) = split_path(src);
+        let (_, rest) = split_path(dst);
+        let (src_name, _) = split_path(src);
         if self.exist(src_name) {
             let src_node = self.children.read().get(src_name).cloned().unwrap();
-            self.children.write().insert(String::from(dst_rest.unwrap()), src_node);
-            self.children.write().remove(src_name);
-            Ok(())
+            if src_node.get_attr().unwrap().is_file() {
+                self.children.write().insert(String::from(rest.unwrap()), src_node);
+                self.children.write().remove(src_name).unwrap();
+                Ok(())
+            } else {
+                Err(VfsError::IsADirectory)
+            }
         } else {
-            Err(VfsError::NotFound)
+            Err(VfsError::InvalidInput)
         }
     }
 

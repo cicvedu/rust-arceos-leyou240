@@ -8,7 +8,6 @@ extern crate axstd as std;
 use std::collections::BTreeMap;
 use std::vec::Vec;
 
-// I AM NOT DONE
 
 fn test_vec() {
     const N: usize = 3;
@@ -17,7 +16,7 @@ fn test_vec() {
         v.push(i);
     }
     for i in 0..N {
-        assert!(v[i] == i);
+        assert_eq!(v[i], i);
     }
     println!("test_vec() OK!");
 }
